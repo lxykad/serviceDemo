@@ -19,7 +19,15 @@
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="服务1" />
+        android:text="本地相机服务开启相机" />
+    <Button
+        android:id="@+id/bt3"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/bt2"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="远程相机服务开启相机" />
 
 
 </RelativeLayout>

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lxy.carema">
 
-    <permission android:name="android.permission.CAMERA"/>
+    <permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -29,6 +29,9 @@
             android:name=".Service1"
             android:enabled="true"
             android:exported="true" />
+        <service android:name=".RemoteService1"
+            android:process=".remoteService1"/>
+
     </application>
 
 </manifest>

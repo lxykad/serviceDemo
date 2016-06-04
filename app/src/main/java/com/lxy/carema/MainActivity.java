@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,8 +14,10 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     private boolean mIsBind;
+    private boolean mIsRemoteBind;
     private Service1.MyBinder mBinder;
 
+    //本地服务
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -28,6 +31,27 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceDisconnected(ComponentName name) {
             mIsBind = false;
             mBinder = null;
+        }
+    };
+    //远程服务
+    private RemoteCamera mRemoteBinder;
+    private ServiceConnection mRemoteConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mIsRemoteBind = true;
+            mRemoteBinder = RemoteCamera.Stub.asInterface(service);
+            //mRemoteBinder = (RemoteCamera) service;//类型强制转换异常
+            try {
+                mRemoteBinder.startRemoteCamera();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mIsRemoteBind = false;
         }
     };
 
@@ -47,6 +71,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //绑定远程服务
+        Button bt3 = (Button) findViewById(R.id.bt3);
+        bt3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, RemoteService1.class);
+                startService(intent);
+                bindService(intent, mRemoteConnection, BIND_AUTO_CREATE);
+            }
+        });
 
     }
 
@@ -61,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         if (mIsBind) {
             unbindService(mConnection);
+        }
+        if(mIsRemoteBind){
+           unbindService(mRemoteConnection);
         }
     }
 }
